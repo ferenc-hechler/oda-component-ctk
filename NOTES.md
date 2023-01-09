@@ -140,31 +140,15 @@ Errorlog:
 Reason: Not Found
 HTTP response headers: HTTPHeaderDict({'Audit-Id': '3909d8c8-df51-405b-b82c-05a75e33d831', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '0db040dc-07a2-4994-b7e4-edb138118973', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'f431a49e-7508-4992-a5b0-95b0cc105987', 'Date': 'Mon, 09 Jan 2023 19:23:44 GMT', 'Content-Length': '174'})
 HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"the server could not find the requested resource","reason":"NotFound","details":{},"code":404}
-
-
-
-[2023-01-09 19:23:44,910] APIOperator          [ERROR   ] [updateImplementationStatus/components/r1-partyroleapi] ApiException when calling DiscoveryV1beta1Api->list_namespaced_endpoint_slice: (404)
-Reason: Not Found
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '63a5dd92-e791-404d-9fea-753fe2788e0e', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '0db040dc-07a2-4994-b7e4-edb138118973', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'f431a49e-7508-4992-a5b0-95b0cc105987', 'Date': 'Mon, 09 Jan 2023 19:23:44 GMT', 'Content-Length': '174'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"the server could not find the requested resource","reason":"NotFound","details":{},"code":404}
-
-
-
+...
 [2023-01-09 19:23:44,911] APIOperator          [WARNING ] Exception when calling CoreApi->read_namespaced_service: (404)
 Reason: Not Found
 HTTP response headers: HTTPHeaderDict({'Audit-Id': '12c78e47-1055-4051-906f-fb109e2f320c', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '0db040dc-07a2-4994-b7e4-edb138118973', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'f431a49e-7508-4992-a5b0-95b0cc105987', 'Date': 'Mon, 09 Jan 2023 19:23:44 GMT', 'Content-Length': '216'})
 HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"services \"istio-ingressgateway\" not found","reason":"NotFound","details":{"name":"istio-ingressgateway","kind":"services"},"code":404}
-
-
-
-[2023-01-09 19:23:44,916] kopf.objects         [ERROR   ] [components/r1-productcatalog-productcatalogmanagement] Handler 'apiStatus' failed temporarily: Exception getting IstioIngressStatus.
-[2023-01-09 19:23:44,957] APIOperator          [WARNING ] Exception when calling CoreApi->read_namespaced_service: (404)
-Reason: Not Found
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '92a217e8-e9c2-4c6e-891e-f7fd7fadae19', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '0db040dc-07a2-4994-b7e4-edb138118973', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'f431a49e-7508-4992-a5b0-95b0cc105987', 'Date': 'Mon, 09 Jan 2023 19:23:44 GMT', 'Content-Length': '216'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"services \"istio-ingressgateway\" not found","reason":"NotFound","details":{"name":"istio-ingressgateway","kind":"services"},"code":404}
+...
 ```
 
-So, the problem is, that "DiscoveryV1beta1Api" is now replaced with V1.
+So, the problem is, that "DiscoveryV1beta1Api" is now replaced with DiscoveryV1Api.
 
 ```
 $ kubectl api-resources | findstr discovery
@@ -175,4 +159,19 @@ endpointslices                                 discovery.k8s.io/v1              
 in dockerhub we can see, that the last update for this component was one year ago and 
 there is only one version 0.1.5.
 So, it looks like no update is available.
+
+see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#endpointslice-v125
+
+```
+EndpointSlice
+
+The discovery.k8s.io/v1beta1 API version of EndpointSlice is no longer served as of v1.25.
+
+    Migrate manifests and API clients to use the discovery.k8s.io/v1 API version, available since v1.21.
+    All existing persisted objects are accessible via the new API
+    Notable changes in discovery.k8s.io/v1:
+        use per Endpoint nodeName field instead of deprecated topology["kubernetes.io/hostname"] field
+        use per Endpoint zone field instead of deprecated topology["topology.kubernetes.io/zone"] field
+        topology is replaced with the deprecatedTopology field which is not writable in v1
+```        
 
