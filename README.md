@@ -117,3 +117,10 @@ For the L2 testing, you need to pre-populate the standard components and OpenAPI
 * The TM Forum OpenAPI CTKs from [Open API Table](https://projects.tmforum.org/wiki/display/API/Open+API+Table) should be copied into the `/api-ctk` folder.
 
 
+# v1beta1
+
+```
+npm install jsonschema
+npm uninstall newman
+npm install newman-reporter-html
+```
